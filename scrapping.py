@@ -64,15 +64,17 @@ class scrapping():
             for star in stars:
                 total_stars = star.find_all("span", {"class": "a-icon-alt"})
                 for i in total_stars:
-                    print(i)
                     self.stars_comments.append(i)
                     
             for span in spans:
                 comments = span.find_all("span")
                 for comment in comments:
                     texto = (str) (comment)
-                    print(texto.replace("<span>", "").replace("</span>", "").replace("<br/>", ""))
                     self.text_comments.append(texto.replace("<span>", "").replace("</span>", "").replace("<br/>", ""))
+        
+        for i in range(len(self.text_comments)):
+            print(self.text_comments[i])
+            print(self.stars_comments[i])
     
     def getPageLinks(self):
         return self.pageLinks 
