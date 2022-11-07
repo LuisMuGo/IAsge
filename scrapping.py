@@ -1,8 +1,10 @@
 import mechanicalsoup
+import csv
 
 class scrapping():
     #String word
     #String base
+    
     def __init__(self,word) -> None:
         self.base = "https://www.amazon.es/"  #Link inicial
         self.word = word                      #Palabra
@@ -43,8 +45,6 @@ class scrapping():
             if(len(links) > 0 ):
                 if len(self.reviewLinks) > 3:
                     print("finish")
-                    for link in self.reviewLinks:
-                        print(link)
                     break
                 link = links[0]['href']
                 link = self.base + link
@@ -53,28 +53,46 @@ class scrapping():
         browser.close()
         # Devolvemos tabla con links
     
+    def writeCsv(self):
+        tabla = []
+        for i in range(len(self.text_comments)):
+            tabla.append(self.text_comments[i])
+            tabla.append(self.stars_comments[i])
+            print(self.text_comments[i])
+            print(self.stars_comments[i])
+            print("----------------")
+        print(tabla)
+        
+        
+        
+    
     def getComments(self):
         browser = mechanicalsoup.StatefulBrowser(user_agent='MechanicalSoup')     #Creamos el browser
         for link in self.reviewLinks:
+            print("-----------------------")
+            print(link)
             host = link                                                                #URL DE WEB
-            browser.open(host)                                                         #Abrimos el browser
+            browser.open(host) 
+            #Abrimos el browser
             page = browser.page
             spans = page.find_all("span", {"class": "a-size-base review-text review-text-content"})
             stars = page.find_all("i", {"data-hook": "review-star-rating"})
-            for star in stars:
-                total_stars = star.find_all("span", {"class": "a-icon-alt"})
-                for i in total_stars:
-                    self.stars_comments.append(i)
-                    
-            for span in spans:
-                comments = span.find_all("span")
-                for comment in comments:
-                    texto = (str) (comment)
-                    self.text_comments.append(texto.replace("<span>", "").replace("</span>", "").replace("<br/>", ""))
-        
-        for i in range(len(self.text_comments)):
-            print(self.text_comments[i])
-            print(self.stars_comments[i])
+            if len(spans) == len(stars):
+                for star in stars:
+                    total_stars = star.find_all("span", {"class": "a-icon-alt"})
+                    for i in total_stars:
+                        i = (str) (i)
+                        self.stars_comments.append(i.replace("<span class=\"a-icon-alt\">", "").replace(" de 5 estrellas</span>",""))
+
+                for span in spans:
+                    comments = span.find_all("span")
+                    for comment in comments:
+                        texto = (str) (comment)
+                        self.text_comments.append(texto.replace("<span>", "").replace("</span>", "").replace("<br/>", ""))
+            else:
+                print("El link (" + link + ") no tiene estrellas")
+            
+        browser.close()
     
     def getPageLinks(self):
         return self.pageLinks 
