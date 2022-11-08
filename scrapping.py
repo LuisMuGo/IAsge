@@ -43,7 +43,7 @@ class scrapping():
             page = browser.page
             links = page.find_all("a",{"class":"a-link-emphasis a-text-bold"})
             if(len(links) > 0 ):
-                if len(self.reviewLinks) > 3:
+                if len(self.reviewLinks) > 150:
                     print("finish")
                     break
                 link = links[0]['href']
@@ -54,44 +54,69 @@ class scrapping():
         # Devolvemos tabla con links
     
     def writeCsv(self):
-        tabla = []
+        commentList = []
+        disalowed_character = "!,?.)(':¿¡*“”"
+        print(len(self.stars_comments))
+        print(len(self.text_comments))
         for i in range(len(self.text_comments)):
-            tabla.append(self.text_comments[i])
-            tabla.append(self.stars_comments[i])
-            print(self.text_comments[i])
-            print(self.stars_comments[i])
-            print("----------------")
-        print(tabla)
+            commentList.append([])
+            commentList[i].append(self.text_comments[i].replace("\"", "").replace(",", "").lower())
+            commentList[i].append(self.stars_comments[i].replace("\"", "").replace(",", "").replace("0","").lower())
+        
+        with open('C:/Users/luism/Desktop/Proyecto/IAsge/comments.csv', 'w', encoding="utf-8") as file:
+           for i in range(len(commentList)):
+                for character in disalowed_character:
+                    commentList[i][0] = commentList[i][0].replace(character,"")
+                txt = "\"" + commentList[i][0] + "\",\""+ commentList[i][1] + "\"\n"
+                file.write(txt)
+        
+        print("finish")
         
         
-        
-    
     def getComments(self):
         browser = mechanicalsoup.StatefulBrowser(user_agent='MechanicalSoup')     #Creamos el browser
         for link in self.reviewLinks:
             print("-----------------------")
             print(link)
-            host = link                                                                #URL DE WEB
-            browser.open(host) 
             #Abrimos el browser
-            page = browser.page
-            spans = page.find_all("span", {"class": "a-size-base review-text review-text-content"})
-            stars = page.find_all("i", {"data-hook": "review-star-rating"})
-            if len(spans) == len(stars):
-                for star in stars:
-                    total_stars = star.find_all("span", {"class": "a-icon-alt"})
-                    for i in total_stars:
-                        i = (str) (i)
-                        self.stars_comments.append(i.replace("<span class=\"a-icon-alt\">", "").replace(" de 5 estrellas</span>",""))
+            for pageNum in range(1, 100):
+                pages = f"&pageNumber={pageNum}"
+                host = link + pages                                                            #URL DE WEB
+                browser.open(host) 
+                print(host)
+                page = browser.page
+                sections = page.find_all("div", {"class": "a-section review aok-relative"})
+                if (len(sections)<1):
+                    print("ROTO")
+                    break
+                for section in sections:
+                    spans = section.find_all("span", {"class": "a-size-base review-text review-text-content"})
+                    stars = section.find_all("span", {"class": "a-icon-alt"})
+                    #print(f"---------------\n --> \n {section}")
+                    if(len(spans) > 0 and len(stars) > 0):
+                        span = spans[0].text
+                        star = stars[0].text
+                        span = span.replace("\n","").replace("<span class=a-size-base review-text review-text-content data-hook=review-body>", "")
+                        if ("video" in span or "img" in span or "no se ha podido cargar el contenido multimedia" in span):
+                            print("VIDEO / img error:")
+                        else:
+                            self.stars_comments.append(star.replace("<span class=\"a-icon-alt\">", "").replace(" de 5 estrellas</span>",""))
+                            self.text_comments.append(span.replace("<span>", "").replace("</span>", "").replace("<br/>", ""))
+                """if len(spans) == len(stars):
+                    for star in stars:
+                        total_stars = star.find_all("span", {"class": "a-icon-alt"})
+                        for i in total_stars:
+                            i = (str) (i)
+                            self.stars_comments.append(i.replace("<span class=\"a-icon-alt\">", "").replace(" de 5 estrellas</span>",""))
 
-                for span in spans:
-                    comments = span.find_all("span")
-                    for comment in comments:
-                        texto = (str) (comment)
-                        self.text_comments.append(texto.replace("<span>", "").replace("</span>", "").replace("<br/>", ""))
-            else:
-                print("El link (" + link + ") no tiene estrellas")
-            
+                    for span in spans:
+                        comments = span.find_all("span")
+                        for comment in comments:
+                            texto = (str) (comment)
+                            self.text_comments.append(texto.replace("<span>", "").replace("</span>", "").replace("<br/>", ""))
+                else:
+                    print(f'{"El link ("} {pageNum} {") no tiene estrellas"}')
+                """
         browser.close()
     
     def getPageLinks(self):
