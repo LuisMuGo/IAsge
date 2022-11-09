@@ -2,6 +2,8 @@ import mechanicalsoup
 import csv
 import os
 
+import time
+
 class scrapping():
     #String word
     #String base
@@ -36,17 +38,19 @@ class scrapping():
                 self.pageLinks.append(href) #Gardamos datos en una tabla
         #Cerramos objeto browser
         browser.close()
+        time.sleep(0.60)
         pass
 
     def getAllReviewLinks(self):
         browser = mechanicalsoup.StatefulBrowser(user_agent='MechanicalSoup')
         for i in range(len(self.pageLinks)):
+            time.sleep(0.60)
             url = self.pageLinks[i]
             browser.open(url)
             page = browser.page
             links = page.find_all("a",{"class":"a-link-emphasis a-text-bold"})
             if(len(links) > 0 ):
-                if len(self.reviewLinks) > 10:
+                if len(self.reviewLinks) > 2:
                     print("finish")
                     break
                 link = links[0]['href']
@@ -59,8 +63,8 @@ class scrapping():
     def writeCsv(self):
         commentList = []
         disalowed_character = "!,?.)(':¿¡*“”"
-        print(len(self.stars_comments))
-        print(len(self.text_comments))
+        print(f"Stars Reg: {len(self.stars_comments)} - Txt Reg: {len(self.text_comments)}")
+
         for i in range(len(self.text_comments)):
             commentList.append([])
             commentList[i].append(self.text_comments[i].replace("\"", "").replace(",", "").lower())
@@ -78,7 +82,9 @@ class scrapping():
         
     def getComments(self):
         browser = mechanicalsoup.StatefulBrowser(user_agent='MechanicalSoup')     #Creamos el browser
+        
         for link in self.reviewLinks:
+            time.sleep(0.60)
             print("-----------------------")
             print(link)
             #Abrimos el browser
@@ -89,7 +95,7 @@ class scrapping():
                 print(host)
                 page = browser.page
                 sections = page.find_all("div", {"class": "a-section review aok-relative"})
-                if (len(sections)<1):
+                if (len(sections) < 1):
                     print("ROTO")
                     break
                 for section in sections:
@@ -103,23 +109,16 @@ class scrapping():
                         if ("video" in span or "img" in span or "no se ha podido cargar el contenido multimedia" in span):
                             print("VIDEO / img error:")
                         else:
-                            self.stars_comments.append(star.replace("<span class=\"a-icon-alt\">", "").replace(" de 5 estrellas</span>",""))
+                            star = star.replace("<span class=\"a-icon-alt\">", "").replace(" de 5 estrellas","")
+                            print(star)
+                            if(star == "5" or star == "4"):
+                                star = "1"
+                            elif(star == "2" or star == "1" or star == "3"):
+                                star = "0"
+                            else:
+                                star = "ERROR"
+                            self.stars_comments.append(star)
                             self.text_comments.append(span.replace("<span>", "").replace("</span>", "").replace("<br/>", ""))
-                """if len(spans) == len(stars):
-                    for star in stars:
-                        total_stars = star.find_all("span", {"class": "a-icon-alt"})
-                        for i in total_stars:
-                            i = (str) (i)
-                            self.stars_comments.append(i.replace("<span class=\"a-icon-alt\">", "").replace(" de 5 estrellas</span>",""))
-
-                    for span in spans:
-                        comments = span.find_all("span")
-                        for comment in comments:
-                            texto = (str) (comment)
-                            self.text_comments.append(texto.replace("<span>", "").replace("</span>", "").replace("<br/>", ""))
-                else:
-                    print(f'{"El link ("} {pageNum} {") no tiene estrellas"}')
-                """
         browser.close()
     
     def getPageLinks(self):
