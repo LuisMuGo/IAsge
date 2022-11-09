@@ -38,19 +38,17 @@ class scrapping():
                 self.pageLinks.append(href) #Gardamos datos en una tabla
         #Cerramos objeto browser
         browser.close()
-        time.sleep(0.60)
         pass
 
     def getAllReviewLinks(self):
         browser = mechanicalsoup.StatefulBrowser(user_agent='MechanicalSoup')
         for i in range(len(self.pageLinks)):
-            time.sleep(0.60)
             url = self.pageLinks[i]
             browser.open(url)
             page = browser.page
             links = page.find_all("a",{"class":"a-link-emphasis a-text-bold"})
             if(len(links) > 0 ):
-                if len(self.reviewLinks) > 2:
+                if len(self.reviewLinks) > 20:
                     print("finish")
                     break
                 link = links[0]['href']
@@ -82,13 +80,11 @@ class scrapping():
         
     def getComments(self):
         browser = mechanicalsoup.StatefulBrowser(user_agent='MechanicalSoup')     #Creamos el browser
-        
         for link in self.reviewLinks:
-            time.sleep(0.60)
             print("-----------------------")
             print(link)
             #Abrimos el browser
-            for pageNum in range(1, 100):
+            for pageNum in range(1, 10):
                 pages = f"&pageNumber={pageNum}"
                 host = link + pages                                                            #URL DE WEB
                 browser.open(host) 
@@ -110,13 +106,6 @@ class scrapping():
                             print("VIDEO / img error:")
                         else:
                             star = star.replace("<span class=\"a-icon-alt\">", "").replace(" de 5 estrellas","")
-                            print(star)
-                            if(star == "5" or star == "4"):
-                                star = "1"
-                            elif(star == "2" or star == "1" or star == "3"):
-                                star = "0"
-                            else:
-                                star = "ERROR"
                             self.stars_comments.append(star)
                             self.text_comments.append(span.replace("<span>", "").replace("</span>", "").replace("<br/>", ""))
         browser.close()
