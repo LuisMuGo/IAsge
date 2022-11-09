@@ -1,5 +1,6 @@
 import mechanicalsoup
 import csv
+import os
 
 class scrapping():
     #String word
@@ -12,6 +13,8 @@ class scrapping():
         self.reviewLinks = []                 #Links review
         self.text_comments = []
         self.stars_comments = []
+        dir = os.path.abspath(__file__)
+        self.parent = os.path.dirname(dir)
 
     def getLinksPage(self,page:int):
         browser = mechanicalsoup.StatefulBrowser(user_agent='MechanicalSoup') #Creamos el browser
@@ -43,7 +46,7 @@ class scrapping():
             page = browser.page
             links = page.find_all("a",{"class":"a-link-emphasis a-text-bold"})
             if(len(links) > 0 ):
-                if len(self.reviewLinks) > 150:
+                if len(self.reviewLinks) > 10:
                     print("finish")
                     break
                 link = links[0]['href']
@@ -63,7 +66,7 @@ class scrapping():
             commentList[i].append(self.text_comments[i].replace("\"", "").replace(",", "").lower())
             commentList[i].append(self.stars_comments[i].replace("\"", "").replace(",", "").replace("0","").lower())
         
-        with open('C:/Users/luism/Desktop/Proyecto/IAsge/comments.csv', 'w', encoding="utf-8") as file:
+        with open(os.path.join(self.parent,"comments.csv"), 'w', encoding="utf-8") as file:
            for i in range(len(commentList)):
                 for character in disalowed_character:
                     commentList[i][0] = commentList[i][0].replace(character,"")
