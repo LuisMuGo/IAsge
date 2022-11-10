@@ -79,12 +79,13 @@ class scrapping():
         
         
     def getComments(self):
+        time.sleep(1)
         browser = mechanicalsoup.StatefulBrowser(user_agent='MechanicalSoup')     #Creamos el browser
         for link in self.reviewLinks:
             print("-----------------------")
             print(link)
             #Abrimos el browser
-            for pageNum in range(1, 10):
+            for pageNum in range(1, 30):
                 pages = f"&pageNumber={pageNum}"
                 host = link + pages                                                            #URL DE WEB
                 browser.open(host) 
