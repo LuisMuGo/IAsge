@@ -1,7 +1,7 @@
 import csv
 import re
 from langdetect import detect
-
+import os
 
 class unicornCleaner():
     
@@ -9,7 +9,8 @@ class unicornCleaner():
         self.reviews = []
     
     def readAndClean(self):
-        with open('C:/Users/luism/Desktop/comments_bueno.csv', encoding='utf-8') as csvfile:
+
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"comments_bueno.csv"), encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 try:
@@ -19,7 +20,7 @@ class unicornCleaner():
                 except:
                     print("error")
             print(len(self.reviews))
-        w = open('C:/Users/luism/Desktop/comments_correcto.csv', "w", encoding='utf-8')
+        w = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"comments_correcto.csv"), "w", encoding='utf-8')
         num = 0
         emoji_pattern = re.compile("["
         u"\U0001F600-\U0001F64F"  # emoticons
@@ -41,9 +42,15 @@ class unicornCleaner():
         u"\ufe0f"  # dingbats
         u"\u3030"
                            "]+", flags=re.UNICODE)
+        w.write("\"review\",\"sentiment\"\n")
         for review in self.reviews:
             review[0] = emoji_pattern.sub(r'', review[0])
-            data = f"\"{review[0]}\",\" {review[1]} \"\n"
+            review[1] = review[1].replace(" ","")
+            if(review[1] == "1" or review[1] == "2" or review[1] == "3"):
+                review[1] = "0"
+            elif(review[1] == "4" or review[1] == "5"):
+                review[1] = "1"
+            data = f"\"{review[0]}\",\"{review[1]}\"\n"
             w.write(data)
             num = num + 1
             if(num%100 == 0):
