@@ -1,6 +1,6 @@
 from time import sleep
 from scrapping import *
-from ia import *
+from unicornCleaner import *
 #scrapping = scrapping("anillo")
 #for i in range(1, 20):
  #   sleep(1)
@@ -8,6 +8,6 @@ from ia import *
 #scrapping.getAllReviewLinks()
 #scrapping.getComments()
 #scrapping.writeCsv()
-ia = ia()
-ia.readAndClean()
+unicornCleaner = unicornCleaner()
+unicornCleaner.readAndClean()
 #hola
