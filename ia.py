@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-
+import numpy as np
 class ia():
     
     def __init__(self) -> None:
@@ -27,15 +27,29 @@ class ia():
         #Tecnica Tfidf -> Busca palabras representativas y relevantes en cada review.
         from sklearn.feature_extraction.text import TfidfVectorizer
 
-        tfidf = TfidfVectorizer()                        #stop_words='spanish' #No disponible en español
+        tfidf = TfidfVectorizer(max_features=80) # Establecemos en maximo 80 palabras mas relevantes
         #Busca parametros ideales para nuestra data y aplicarlos
             #Transforma Str a Double
         train_x_vector = tfidf.fit_transform(train_x)    
         test_x_vector  = tfidf.fit_transform(test_x)
-        print(train_x_vector)
 
         #Modelo con aprendizaje supervisado en clasificación
-
+        from sklearn.linear_model import LogisticRegression
+        lr = LogisticRegression()
+        print("Entrenando modelo...")
+        lr.fit(train_x_vector,train_y)
+        print("Modelo entrenado")
+        print("Testeando modelo...")
+        sc = lr.score(test_x_vector,test_y)
+        print(f"Testeo finalizado con resultado = {round(sc*100,2)}% de aciertos")
         
 
+        tfidf = TfidfVectorizer(max_features=80) # Establecemos en maximo 80 palabras mas relevantes
+        #Busca parametros ideales para nuestra data y aplicarlos
+            #Transforma Str a Double
+        dto = tfidf.fit_transform(['hola'])
+        
+        aa = lr.predict(np.array(dto))
+
+        print(aa)
         pass
