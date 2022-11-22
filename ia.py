@@ -50,6 +50,5 @@ class ia():
         dto = tfidf.fit_transform(['hola'])
         
         aa = lr.predict(np.array(dto))
-
         print(aa)
         pass
