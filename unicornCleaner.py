@@ -7,6 +7,15 @@ class unicornCleaner():
     
     def __init__(self) -> None:
         self.reviews = []
+        
+    def normalize():
+        return replacements = (
+            ("á", "a"),
+            ("é", "e"),
+            ("í", "i"),
+            ("ó", "o"),
+            ("ú", "u"),
+        )
     
     def readAndClean(self):
 
@@ -45,6 +54,7 @@ class unicornCleaner():
         w.write("\"review\",\"sentiment\"\n")
         for review in self.reviews:
             review[0] = emoji_pattern.sub(r'', review[0])
+            # review[0] = normalize().sub(r'', review[0]) # Revisar
             review[1] = review[1].replace(" ","")
             if(review[1] == "1" or review[1] == "2" or review[1] == "3"):
                 review[1] = "0"
