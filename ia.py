@@ -7,19 +7,34 @@ class ia():
         # Input  - > Comentarios  | Var X
         # Output - > Sentimientos | Var y
         # Nota: Los datos de input estan desbalancedos
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),"comments_pruebas.csv")
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),"comments_correcto.csv")
         print(path)
         df = pd.read_csv(path)
         print(df)
         print(df.value_counts("sentiment"))    
+        """
+        df_positivo = df[df["sentiment"]=="1"][:1000]
+        df_negativo = df[df["sentiment"]=="0"][:1000]
+        
+        # balanceado
+        df_review = pd.concat([df_positivo, df_negativo])
+        print("XD")
+        print(df_review.value_counts("sentiment"))
+        print("XD")
+        """
+        from imblearn.under_sampling import RandomUnderSampler
 
+        rus = RandomUnderSampler()
+        df_review_bal, df_review_bal['sentiment'] = rus.fit_resample(df[['review']],df['sentiment'])
 
-
+        print(df_review_bal.value_counts(['sentiment']))
+        
+        
         # Importamos el divisor de datos
         from sklearn.model_selection import train_test_split
         #Dividimos data para entrenar y para testear
                                         #DF
-        train, test = train_test_split(df,test_size=0.20,random_state=42)
+        train, test = train_test_split(df_review_bal,test_size=0.20,random_state=42)
         #Separamos en Input(X) y Output(Y) 
         train_x, train_y = train['review'],train['sentiment']
         test_x,  test_y  = test['review'] ,test['sentiment']
@@ -30,7 +45,7 @@ class ia():
         #Tecnica Tfidf -> Busca palabras representativas y relevantes en cada review.
         from sklearn.feature_extraction.text import TfidfVectorizer
 
-        tfidf = TfidfVectorizer(max_features=3600) # Establecemos en maximo 80 palabras mas relevantes
+        tfidf = TfidfVectorizer(max_features=1000) # Establecemos en maximo 80 palabras mas relevantes
         #Busca parametros ideales para nuestra data y aplicarlos
             #Transforma Str a Double
         train_x_vector = tfidf.fit_transform(train_x)    
