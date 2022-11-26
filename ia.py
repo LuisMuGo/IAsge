@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 class ia():
     
-    def __init__(self) -> None:
+    def __init__(self) -> None: 
         # Input  - > Comentarios  | Var X
         # Output - > Sentimientos | Var y
         # Nota: Los datos de input estan desbalancedos
