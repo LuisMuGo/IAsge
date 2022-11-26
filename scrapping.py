@@ -26,6 +26,8 @@ class scrapping():
         #Obtenemos la pagina
         page = browser.page #Obtenemos web
         
+        
+        
         #Obtenemos los spans que contienen los links
         spans = page.find_all("span", {"class": "rush-component"}) #Buscamos spans contenedores
         print(f"Hola")
