@@ -26,7 +26,7 @@ def read_and_prepare_data(filename):
         Sample the dataset in an imbalancd way
         Compare imbalance statistics
     """
-    df = pd.read_csv(filename)
+    df = pd.read_csv(filename) #---------------------------------------------------
 
     print(f"Shape of the original dataset is {df.shape}")
     print(
@@ -137,7 +137,7 @@ def main():
 
     set_session_path()
 
-    final_df = read_and_prepare_data("imdb_dataset.csv")
+    final_df = read_and_prepare_data("comments_correcto.csv") #imdb_dataset.csv
     final_df["clean_text"] = final_df["review"].apply(preprocess_text)
 
     final_df = final_df[["clean_text", "sentiment"]]

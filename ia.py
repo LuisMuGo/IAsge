@@ -23,11 +23,11 @@ class ia():
         print("XD")
         """
         from imblearn.under_sampling import RandomUnderSampler
-
+        df_review_bal = df
         rus = RandomUnderSampler()
         df_review_bal, df_review_bal['sentiment'] = rus.fit_resample(df[['review']],df['sentiment'])
 
-        print(df_review_bal.value_counts(['sentiment']))
+        print(df_review_bal.value_counts(['sentiment'],normalize=True))
         
         
         # Importamos el divisor de datos
@@ -45,17 +45,22 @@ class ia():
         #Tecnica Tfidf -> Busca palabras representativas y relevantes en cada review.
         from sklearn.feature_extraction.text import TfidfVectorizer
 
-        tfidf = TfidfVectorizer(max_features=1000) # Establecemos en maximo 80 palabras mas relevantes
+        tfidf = TfidfVectorizer(max_features=500) # Establecemos en maximo 80 palabras mas relevantes
         #Busca parametros ideales para nuestra data y aplicarlos
             #Transforma Str a Double
         train_x_vector = tfidf.fit_transform(train_x)    
         test_x_vector  = tfidf.fit_transform(test_x)
+        
+        
 
         #Modelo con aprendizaje supervisado en clasificación
         from sklearn.linear_model import LogisticRegression
+        
+
         lr = LogisticRegression()
         print("Entrenando modelo...")
         lr.fit(train_x_vector,train_y)
+        
         print("Modelo entrenado")
         print("Testeando modelo...")
         sc = lr.score(test_x_vector,test_y)
@@ -71,5 +76,6 @@ class ia():
             dto = tfidf.transform([imp])
             
             result = lr.predict(dto)
+           
             print(result)
             pass

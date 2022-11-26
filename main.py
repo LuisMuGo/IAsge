@@ -1,6 +1,6 @@
-from time import sleep
-from scrapping import *
-from unicornCleaner import *
+#from time import sleep
+#from scrapping import *
+from unicornCleaner import unicornCleaner
 from ia import ia
 #scrapping = scrapping("anillo")
 #for i in range(1, 20):
