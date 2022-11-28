@@ -12,28 +12,18 @@ class ia():
         df = pd.read_csv(path)
         print(df)
         print(df.value_counts("sentiment"))    
-        """
-        df_positivo = df[df["sentiment"]=="1"][:1000]
-        df_negativo = df[df["sentiment"]=="0"][:1000]
         
-        # balanceado
-        df_review = pd.concat([df_positivo, df_negativo])
-        print("XD")
-        print(df_review.value_counts("sentiment"))
-        print("XD")
-        """
+        # Balanceamos los datos
         from imblearn.under_sampling import RandomUnderSampler
         df_review_bal = df
         rus = RandomUnderSampler()
         df_review_bal, df_review_bal['sentiment'] = rus.fit_resample(df[['review']],df['sentiment'])
-
+        # Mostramos por pantalla que el balance se ha hecho
         print(df_review_bal.value_counts(['sentiment'],normalize=True))
-        
         
         # Importamos el divisor de datos
         from sklearn.model_selection import train_test_split
         #Dividimos data para entrenar y para testear
-                                        #DF
         train, test = train_test_split(df_review_bal,test_size=0.20,random_state=42)
         #Separamos en Input(X) y Output(Y) 
         train_x, train_y = train['review'],train['sentiment']
@@ -42,7 +32,7 @@ class ia():
         #Transformamos texto a data numerica (Vectores)
             #Usando tecnica (Bag of Words) - (Bolsa de palabras)
 
-        #Tecnica Tfidf -> Busca palabras representativas y relevantes en cada review.
+        #Tecnica Tfidf -> Busca palabras representativas y relevantes en cada review
         from sklearn.feature_extraction.text import TfidfVectorizer
 
         tfidf = TfidfVectorizer(max_features=500) # Establecemos en maximo 80 palabras mas relevantes
@@ -50,10 +40,8 @@ class ia():
             #Transforma Str a Double
         train_x_vector = tfidf.fit_transform(train_x)    
         test_x_vector  = tfidf.fit_transform(test_x)
-        
-        
 
-        #Modelo con aprendizaje supervisado en clasificación
+        #Modelo con aprendizaje supervisado en clasificacion
         from sklearn.linear_model import LogisticRegression
         
 
@@ -78,4 +66,3 @@ class ia():
             result = lr.predict(dto)
            
             print(result)
-            pass

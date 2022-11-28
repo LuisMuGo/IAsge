@@ -30,14 +30,13 @@ class scrapping():
         
         #Obtenemos los spans que contienen los links
         spans = page.find_all("span", {"class": "rush-component"}) #Buscamos spans contenedores
-        print(f"Hola")
         for span in spans:
             #Obtenemos los links
-            links = span.find_all("a",{"class":"a-link-normal s-no-outline"}) #Buscamoss links
+            links = span.find_all("a",{"class":"a-link-normal s-no-outline"}) #Buscamos links
             for link in links:
                 href = link['href']
                 href = self.base + href
-                self.pageLinks.append(href) #Gardamos datos en una tabla
+                self.pageLinks.append(href) #Guardamos datos en una tabla
         #Cerramos objeto browser
         browser.close()
         pass
@@ -100,7 +99,6 @@ class scrapping():
                 for section in sections:
                     spans = section.find_all("span", {"class": "a-size-base review-text review-text-content"})
                     stars = section.find_all("span", {"class": "a-icon-alt"})
-                    #print(f"---------------\n --> \n {section}")
                     if(len(spans) > 0 and len(stars) > 0):
                         span = spans[0].text
                         star = stars[0].text

@@ -54,7 +54,6 @@ class unicornCleaner():
             )
             for a, b in replacements:
                 review[0] = review[0].replace(a,b).replace(a.upper(),b.upper())
-            # review[0] = normalize().sub(r'', review[0]) # Revisar
             review[1] = review[1].replace(" ","")
             if(review[1] == "1" or review[1] == "2" or review[1] == "3"):
                 review[1] = "0"
